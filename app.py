@@ -36,11 +36,11 @@ except Exception as e:
 
 # Define resume-specific keywords for validation
 RESUME_KEYWORDS = {
-    'education': ['education', 'university', 'college', 'school', 'degree', 'bachelor', 'master', 'phd', 'diploma'],
-    'experience': ['experience', 'work', 'job', 'career', 'employment', 'position', 'role'],
-    'skills': ['skills', 'abilities', 'expertise', 'proficient', 'knowledge', 'competencies'],
-    'contact': ['email', 'phone', 'address', 'contact', 'linkedin', 'github'],
-    'sections': ['summary', 'objective', 'profile', 'projects', 'achievements', 'certifications']
+    'education': ['education', 'university', 'college', 'school', 'degree', 'bachelor', 'master', 'phd', 'diploma', 'academic'],
+    'experience': ['experience', 'work', 'job', 'career', 'employment', 'position', 'role', 'company', 'organization'],
+    'skills': ['skills', 'abilities', 'expertise', 'proficient', 'knowledge', 'competencies', 'technical', 'tools'],
+    'contact': ['email', 'phone', 'address', 'contact', 'linkedin', 'github', 'location', 'mobile'],
+    'sections': ['summary', 'objective', 'profile', 'projects', 'achievements', 'certifications', 'responsibilities']
 }
 
 def is_valid_resume(text):
@@ -52,25 +52,23 @@ def is_valid_resume(text):
     section_count = 0
     
     for category, keywords in RESUME_KEYWORDS.items():
+        category_found = False
         for keyword in keywords:
             if keyword in text:
                 keyword_count += 1
-                if category == 'sections':
+                if not category_found and category == 'sections':
                     section_count += 1
+                    category_found = True
     
     # Calculate text statistics
     words = text.split()
     word_count = len(words)
     
-    # Validation criteria:
-    # 1. Should have minimum number of resume keywords
-    # 2. Should have at least some section keywords
-    # 3. Should have reasonable length
-    # 4. Should not be too short or too long
+    # More lenient validation criteria
     is_valid = (
-        keyword_count >= 5 and  # At least 5 resume-related keywords
-        section_count >= 2 and  # At least 2 section headers
-        100 <= word_count <= 5000  # Reasonable resume length
+        keyword_count >= 3 and  # Reduced from 5 to 3 keywords
+        section_count >= 1 and  # Reduced from 2 to 1 section
+        50 <= word_count <= 5000  # Reduced minimum word count from 100 to 50
     )
     
     return is_valid, {
